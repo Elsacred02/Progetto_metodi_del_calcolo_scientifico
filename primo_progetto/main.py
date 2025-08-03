@@ -6,7 +6,7 @@ import os
 
 def main():
 
-    file_name = "vem2"
+    file_name = "spa1"
     path = f"primo_progetto/matrici_test/{file_name}.mtx"
 
     # Carica matrice e dati iniziali

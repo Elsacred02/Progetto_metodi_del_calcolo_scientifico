@@ -98,8 +98,18 @@ def jacobi_solver(A, b, x, tol):
         Tempo impiegato per risolvere il sistema
     """
 
+    if not _is_symmetric_positive_definite(A):
+        print("[Warning] - la matrice A non è simmetrica e definita positiva")
+    if not _is_row_diagonally_dominant(A):
+        print("[Warning] - la matrice A non ha dominanza triangolare per righe, la convergenza non e' garantita")
+
     # Definisco la matrice P secondo il metodo di Jacobi e calcolo l'inversa
     P = np.diag(np.diag(A))
+
+    if np.any(np.diag(A) == 0):
+        print("[Errore] - sulla diagonale di A è presente un elemento nullo, quindi la matrice P non e' invertibile.")
+        return None, 0, 0, 0
+
     P_inv = np.linalg.inv(P)
 
     # Effettua l'aggiornamento della soluzione corrente usando il metodo di Jacobi
@@ -138,6 +148,10 @@ def gauss_seidel_solver(A, b, x, tol):
     elapsed_time: float
         Tempo impiegato per risolvere il sistema
     """
+    if not _is_symmetric_positive_definite(A):
+        print("[Warning] - la matrice A non è simmetrica e definita positiva")
+    if not _is_row_diagonally_dominant(A):
+        print("[Warning] - la matrice A non ha dominanza triangolare per righe, la convergenza non e' garantita")
 
     # Definisco la matrice P secondo il metodo di Gauss-Seidel
     P = np.tril(A)
@@ -219,6 +233,9 @@ def gradient_solver(A, b, x, tol):
         Tempo impiegato per risolvere il sistema
     """
 
+    if not _is_symmetric_positive_definite(A):
+        print("[Errore] - la matrice A non è simmetrica e definita positiva")
+        return None, 0, 0, 0
     # Effettua l'aggiornamento della soluzione corrente usando il metodo del gradiente
     def _gradient_update(current_sol):
         r = b - A @ current_sol
@@ -257,6 +274,10 @@ def coniugate_gradient_solver(A, b, x, tol):
         Tempo impiegato per risolvere il sistema
     """
 
+    if not _is_symmetric_positive_definite(A):
+        print("[Errore] - la matrice A non è simmetrica e definita positiva")
+        return None, 0, 0, 0
+
     # Inizializzazione delle variabili
     r = b - A @ np.zeros(A.shape[0])
     current_d = r
@@ -277,3 +298,25 @@ def coniugate_gradient_solver(A, b, x, tol):
         return new_sol
 
     return _base_iterative_solver(A, b, x, tol, _coniugate_gradient_update)
+
+def _is_symmetric(A, tol=1e-8):
+    return np.allclose(A, A.T, atol=tol)
+
+def _is_positive_definite(A):
+    try:
+        np.linalg.cholesky(A)
+        return True
+    except np.linalg.LinAlgError:
+        return False
+
+def _is_symmetric_positive_definite(A, tol=1e-8):
+    return _is_symmetric(A, tol) and _is_positive_definite(A)
+
+def _is_row_diagonally_dominant(A):
+    n = A.shape[0]
+    for i in range(n):
+        diag = abs(A[i, i])
+        off_diag_sum = np.sum(np.abs(A[i, :])) - diag
+        if diag <= off_diag_sum:
+            return False
+    return True
