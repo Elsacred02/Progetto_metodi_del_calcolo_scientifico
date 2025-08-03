@@ -6,14 +6,14 @@ import os
 
 def main():
 
-    file_name = "spa1"
+    file_name = "vem2"
     path = f"primo_progetto/matrici_test/{file_name}.mtx"
 
     # Carica matrice e dati iniziali
     matrix = mmread(path)
     A = matrix.toarray()
-    x_true = np.ones(A.shape[0])
-    b = A @ x_true
+    x = np.ones(A.shape[0])
+    b = A @ x
     tol_values = [1e-4, 1e-6, 1e-8, 1e-10]
 
     methods = {
@@ -30,8 +30,13 @@ def main():
 
     for method_name, solver in methods.items():
         for tol in tol_values:
-            x0 = np.ones_like(x_true)
-            sol, k, rel_err, elapsed = solver(A, b, x0, tol)
+            sol, k, rel_err, elapsed = solver(A, b, x, tol)
+            print(f"Metodo: {method_name}")
+            print(f"Tol: {tol}")
+            print(f"Iterazioni: {k}")
+            print(f"Errore: {rel_err}")
+            print(f"Tempo: {elapsed}")
+            print("-----------------------------------------")
             iterations[tol].append(k)
             errors[tol].append(rel_err)
             times[tol].append(elapsed)
@@ -74,15 +79,14 @@ def main():
     axs[2].set_yscale('log')
     axs[2].set_ylabel("Tempo")
 
-    # Legenda unica
-    fig.legend(loc='lower center', ncol=len(tol_values), bbox_to_anchor=(0.5, -0.15))
-    fig.tight_layout(rect=[0, 0.05, 1, 0.95])
+    handles, labels = axs[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='lower center', ncol=len(tol_values), bbox_to_anchor=(0.5, -0.25))
+    fig.tight_layout(rect=[0, 0.1, 1, 0.95])
 
     # Salvataggio
     os.makedirs("primo_progetto/output_immagini", exist_ok=True)
-
     image_path = f"primo_progetto/output_immagini/statistiche_{file_name}.png"
-    plt.savefig(image_path, dpi=300)
+    plt.savefig(image_path, dpi=300, bbox_inches='tight')
     plt.close()
 
 if __name__ == '__main__':

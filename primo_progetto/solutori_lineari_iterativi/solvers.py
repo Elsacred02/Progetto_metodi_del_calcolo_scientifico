@@ -6,6 +6,34 @@ from debugpy.common.timestamp import current
 
 def _base_iterative_solver(A, b, x, tol, update_method):
 
+    """
+    Funzione base per la risoluzione di un sistema lineare Ax=b utilizzando metodi iterativi.
+
+    Parameters
+    ----------
+    A: numpy array
+        Matrice dei coefficienti del sistema lineare
+    b: numpy array
+        Vettore dei termini noti del sistema lineare
+    x: numpy array
+        Vettore soluzione esatta del sistema lineare (utilizzata per calcolare l'errore relativo)
+    tol: float
+        Tolleranza per la convergenza del metodo
+    update_method: funzione
+        Funzione che implementa il metodo iterativo scelto per la risoluzione del sistema
+
+    Returns
+    -------
+    sol: numpy array
+        Vettore soluzione approssimata del sistema lineare
+    k: int
+        Numero di iterazioni eseguite
+    relative_error: float
+        Errore relativo tra la soluzione esatta e quella approssimata
+    elapsed_time: float
+        Tempo impiegato per risolvere il sistema
+    """
+
     # Controlli preliminari sull'input
     rows, cols = A.shape
     if rows != cols:
@@ -25,6 +53,7 @@ def _base_iterative_solver(A, b, x, tol, update_method):
     sol = np.zeros(rows)
     k = 0
 
+    # Struttura base dei metodi iterativi
     while (np.linalg.norm(A @ sol - b, ord=np.inf) / np.linalg.norm(b)) > tol:
         sol = update_method(sol)
         k = k + 1
@@ -35,15 +64,45 @@ def _base_iterative_solver(A, b, x, tol, update_method):
     # Fermo cronometro
     elapsed_time = time.time() - start_time
 
-    relative_error = np.linalg.norm(A @ sol - b, ord=np.inf) / np.linalg.norm(b, ord=np.inf)
+    # Calcolo l'errore relativo
+    relative_error = np.linalg.norm(sol - x, ord=np.inf) / np.linalg.norm(x, ord=np.inf)
 
+    # Restituisco i parametri calcolati
     return sol, k, relative_error, elapsed_time
 
 
 def jacobi_solver(A, b, x, tol):
+    """
+    Risolve il sistema lineare A @ x = b utilizzando il metodo di Jacobi.
 
+    Parameters
+    ----------
+    A: numpy array
+        Matrice dei coefficienti del sistema lineare
+    b: numpy array
+        Vettore dei termini noti del sistema lineare
+    x: numpy array
+        Vettore soluzione esatta del sistema lineare (utilizzata per calcolare l'errore relativo)
+    tol: float
+        Tolleranza per la convergenza del metodo
+
+    Returns
+    -------
+    sol: numpy array
+        Vettore soluzione approssimata del sistema lineare
+    k: int
+        Numero di iterazioni eseguite
+    relative_error: float
+        Errore relativo tra la soluzione esatta e quella approssimata
+    elapsed_time: float
+        Tempo impiegato per risolvere il sistema
+    """
+
+    # Definisco la matrice P secondo il metodo di Jacobi e calcolo l'inversa
     P = np.diag(np.diag(A))
     P_inv = np.linalg.inv(P)
+
+    # Effettua l'aggiornamento della soluzione corrente usando il metodo di Jacobi
     def _jacobi_update(current_sol):
         new_sol = current_sol + P_inv @ (b - A @ current_sol)
         return new_sol
@@ -54,7 +113,36 @@ def jacobi_solver(A, b, x, tol):
 
 def gauss_seidel_solver(A, b, x, tol):
 
+    """
+    Risolve il sistema lineare A @ x = b utilizzando il metodo di Gauss-Seidel.
+
+    Parameters
+    ----------
+    A: numpy array
+        Matrice dei coefficienti del sistema lineare
+    b: numpy array
+        Vettore dei termini noti del sistema lineare
+    x: numpy array
+        Vettore soluzione esatta del sistema lineare (utilizzata per calcolare l'errore relativo)
+    tol: float
+        Tolleranza per la convergenza del metodo
+
+    Returns
+    -------
+    sol: numpy array
+        Vettore soluzione approssimata del sistema lineare
+    k: int
+        Numero di iterazioni eseguite
+    relative_error: float
+        Errore relativo tra la soluzione esatta e quella approssimata
+    elapsed_time: float
+        Tempo impiegato per risolvere il sistema
+    """
+
+    # Definisco la matrice P secondo il metodo di Gauss-Seidel
     P = np.tril(A)
+
+    # Effettua l'aggiornamento della soluzione corrente usando il metodo di Gauss-Seidel
     def _gauss_seidel_update(current_sol):
         r = b - A @ current_sol
         y = _linear_solve_forward(P, r)
@@ -65,6 +153,23 @@ def gauss_seidel_solver(A, b, x, tol):
 
 
 def _linear_solve_forward(L, b):
+
+    """
+    Risolve il sistema lineare L @ x = b, dove L è una matrice inferiore triangolare,
+    utilizzando l'algoritmo di sostituzione in avanti.
+
+    Parameters
+    ----------
+    L: numpy array
+        Matrice dei coefficienti del sistema lineare
+    b: numpy array
+        Vettore dei termini noti del sistema lineare
+
+    Returns
+    -------
+    sol: numpy array
+        Vettore soluzione approssimata del sistema lineare
+    """
 
     rows, cols = L.shape
     if rows != cols:
@@ -88,6 +193,33 @@ def _linear_solve_forward(L, b):
     return x
 
 def gradient_solver(A, b, x, tol):
+    """
+    Risolve il sistema lineare A @ x = b utilizzando il metodo del gradiente.
+
+    Parameters
+    ----------
+    A: numpy array
+        Matrice dei coefficienti del sistema lineare
+    b: numpy array
+        Vettore dei termini noti del sistema lineare
+    x: numpy array
+        Vettore soluzione esatta del sistema lineare (utilizzata per calcolare l'errore relativo)
+    tol: float
+        Tolleranza per la convergenza del metodo
+
+    Returns
+    -------
+    sol: numpy array
+        Vettore soluzione approssimata del sistema lineare
+    k: int
+        Numero di iterazioni eseguite
+    relative_error: float
+        Errore relativo tra la soluzione esatta e quella approssimata
+    elapsed_time: float
+        Tempo impiegato per risolvere il sistema
+    """
+
+    # Effettua l'aggiornamento della soluzione corrente usando il metodo del gradiente
     def _gradient_update(current_sol):
         r = b - A @ current_sol
         y = A @ r
@@ -98,13 +230,38 @@ def gradient_solver(A, b, x, tol):
 
     return _base_iterative_solver(A, b, x, tol, _gradient_update)
 
-
-
 def coniugate_gradient_solver(A, b, x, tol):
+    """
+    Risolve il sistema lineare A @ x = b utilizzando il metodo del gradiente coniugato.
 
+    Parameters
+    ----------
+    A: numpy array
+        Matrice dei coefficienti del sistema lineare
+    b: numpy array
+        Vettore dei termini noti del sistema lineare
+    x: numpy array
+        Vettore soluzione esatta del sistema lineare (utilizzata per calcolare l'errore relativo)
+    tol: float
+        Tolleranza per la convergenza del metodo
+
+    Returns
+    -------
+    sol: numpy array
+        Vettore soluzione approssimata del sistema lineare
+    k: int
+        Numero di iterazioni eseguite
+    relative_error: float
+        Errore relativo tra la soluzione esatta e quella approssimata
+    elapsed_time: float
+        Tempo impiegato per risolvere il sistema
+    """
+
+    # Inizializzazione delle variabili
     r = b - A @ np.zeros(A.shape[0])
     current_d = r
 
+    # Effettua l'aggiornamento della soluzione corrente usando il metodo del gradiente coniugato
     def _coniugate_gradient_update(current_sol):
         nonlocal current_d
         r = b - A @ current_sol
@@ -120,6 +277,3 @@ def coniugate_gradient_solver(A, b, x, tol):
         return new_sol
 
     return _base_iterative_solver(A, b, x, tol, _coniugate_gradient_update)
-
-
-
