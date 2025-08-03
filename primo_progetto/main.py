@@ -1,4 +1,4 @@
-from solutori_lineari_iterativi.solvers import *
+from primo_progetto.solutori_lineari_iterativi import *
 from scipy.io import mmread
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,7 +6,7 @@ import os
 
 def main():
 
-    file_name = "vem2"
+    file_name = "spa1"
     path = f"primo_progetto/matrici_test/{file_name}.mtx"
 
     # Carica matrice e dati iniziali
@@ -79,9 +79,9 @@ def main():
     fig.tight_layout(rect=[0, 0.05, 1, 0.95])
 
     # Salvataggio
-    os.makedirs("primo_progetto/matrici_test/output_immagini", exist_ok=True)
+    os.makedirs("primo_progetto/output_immagini", exist_ok=True)
 
-    image_path = f"primo_progetto/matrici_test/output_immagini/statistiche_{file_name}.png"
+    image_path = f"primo_progetto/output_immagini/statistiche_{file_name}.png"
     plt.savefig(image_path, dpi=300)
     plt.close()
 
