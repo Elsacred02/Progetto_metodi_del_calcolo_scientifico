@@ -3,10 +3,11 @@ from scipy.io import mmread
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
 
 def main():
 
-    file_name = "spa1"
+    file_name = "vem2"
     path = f"primo_progetto/matrici_test/{file_name}.mtx"
 
     # Carica matrice e dati iniziali
@@ -31,12 +32,6 @@ def main():
     for method_name, solver in methods.items():
         for tol in tol_values:
             sol, k, rel_err, elapsed = solver(A, b, x, tol)
-            print(f"Metodo: {method_name}")
-            print(f"Tol: {tol}")
-            print(f"Iterazioni: {k}")
-            print(f"Errore: {rel_err}")
-            print(f"Tempo: {elapsed}")
-            print("-----------------------------------------")
             iterations[tol].append(k)
             errors[tol].append(rel_err)
             times[tol].append(elapsed)
@@ -88,6 +83,54 @@ def main():
     image_path = f"primo_progetto/output_immagini/statistiche_{file_name}.png"
     plt.savefig(image_path, dpi=300, bbox_inches='tight')
     plt.close()
+
+    # Tabella con i dati
+    table_rows = []
+
+    method_nomi = {
+        'jacobi': 'Jacobi',
+        'gauss-seidel': 'Gauss–Seidel',
+        'gradient': 'Gradiente',
+        'conjugated-gradient': 'Gradiente Coniugato'
+    }
+
+    for tol in tol_values:
+        first_row = True
+        for method_key in methods.keys():
+            row = {
+                "Tolleranza": f"{tol:.0e}" if first_row else "",
+                "Metodo": method_nomi[method_key],
+                "Iterazioni": f"{iterations[tol][list(methods).index(method_key)]}",
+                "Tempo (s)": f"{times[tol][list(methods).index(method_key)]:.5f}",
+                "Errore relativo": f"{errors[tol][list(methods).index(method_key)]:.2e}"
+            }
+            table_rows.append(row)
+            first_row = False
+
+    df = pd.DataFrame(table_rows)
+
+    fig, ax = plt.subplots(figsize=(10, 0.6 + 0.35 * len(df)))
+    ax.axis('off')
+
+    plt.rcParams["font.family"] = "serif"
+
+    table = ax.table(
+        cellText=df.values,
+        colLabels=df.columns,
+        cellLoc='center',
+        loc='center'
+    )
+
+    table.auto_set_font_size(False)
+    table.set_fontsize(11)
+    table.scale(1.2, 1.2)
+
+    plt.title(f"Table 1: Risultati per $\\mathtt{{{file_name}}}$.", fontsize=14, pad=20)
+
+    os.makedirs("primo_progetto/output_immagini", exist_ok=True)
+    plt.savefig(f"primo_progetto/output_immagini/tabella_{file_name}.png", dpi=300, bbox_inches='tight')
+    plt.close()
+
 
 if __name__ == '__main__':
     main()
