@@ -7,8 +7,8 @@ import pandas as pd
 
 def main():
 
-    file_name = "vem2"
-    path = f"primo_progetto/matrici_test/{file_name}.mtx"
+    file_name = "spa1"
+    path = f"matrici_test/{file_name}.mtx"
 
     # Carica matrice e dati iniziali
     matrix = mmread(path)
@@ -79,8 +79,8 @@ def main():
     fig.tight_layout(rect=[0, 0.1, 1, 0.95])
 
     # Salvataggio
-    os.makedirs("primo_progetto/output_immagini", exist_ok=True)
-    image_path = f"primo_progetto/output_immagini/statistiche_{file_name}.png"
+    os.makedirs("output_immagini", exist_ok=True)
+    image_path = f"output_immagini/statistiche_{file_name}.png"
     plt.savefig(image_path, dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -127,8 +127,8 @@ def main():
 
     plt.title(f"Table 1: Risultati per $\\mathtt{{{file_name}}}$.", fontsize=14, pad=20)
 
-    os.makedirs("primo_progetto/output_immagini", exist_ok=True)
-    plt.savefig(f"primo_progetto/output_immagini/tabella_{file_name}.png", dpi=300, bbox_inches='tight')
+    os.makedirs("output_immagini", exist_ok=True)
+    plt.savefig(f"output_immagini/tabella_{file_name}.png", dpi=300, bbox_inches='tight')
     plt.close()
 
 
