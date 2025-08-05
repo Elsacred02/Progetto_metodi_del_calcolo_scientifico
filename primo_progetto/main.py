@@ -13,6 +13,14 @@ def main():
     # Carica matrice e dati iniziali
     matrix = mmread(path)
     A = matrix.toarray()
+
+    # Controllo per determinare se la matrice è sparsa o densa
+    num_elements = A.size
+    num_zeros = np.count_nonzero(A == 0)
+    percent_zeros = num_zeros / num_elements * 100
+
+    print(f"Percentuale di zeri: {percent_zeros:.2f}%")
+
     x = np.ones(A.shape[0])
     b = A @ x
     tol_values = [1e-4, 1e-6, 1e-8, 1e-10]
