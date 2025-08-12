@@ -6,34 +6,6 @@ from debugpy.common.timestamp import current
 
 def _base_iterative_solver(A, b, x, tol, update_method):
 
-    """
-    Funzione base per la risoluzione di un sistema lineare Ax=b utilizzando metodi iterativi.
-
-    Parameters
-    ----------
-    A: numpy array
-        Matrice dei coefficienti del sistema lineare
-    b: numpy array
-        Vettore dei termini noti del sistema lineare
-    x: numpy array
-        Vettore soluzione esatta del sistema lineare (utilizzata per calcolare l'errore relativo)
-    tol: float
-        Tolleranza per la convergenza del metodo
-    update_method: funzione
-        Funzione che implementa il metodo iterativo scelto per la risoluzione del sistema
-
-    Returns
-    -------
-    sol: numpy array
-        Vettore soluzione approssimata del sistema lineare
-    k: int
-        Numero di iterazioni eseguite
-    relative_error: float
-        Errore relativo tra la soluzione esatta e quella approssimata
-    elapsed_time: float
-        Tempo impiegato per risolvere il sistema
-    """
-
     # Controlli preliminari sull'input
     rows, cols = A.shape
     if rows != cols:
@@ -72,6 +44,7 @@ def _base_iterative_solver(A, b, x, tol, update_method):
 
 
 def jacobi_solver(A, b, x, tol):
+
     """
     Risolve il sistema lineare A @ x = b utilizzando il metodo di Jacobi.
 
@@ -120,7 +93,6 @@ def jacobi_solver(A, b, x, tol):
     return _base_iterative_solver(A, b, x, tol, _jacobi_update)
 
 
-
 def gauss_seidel_solver(A, b, x, tol):
 
     """
@@ -148,6 +120,7 @@ def gauss_seidel_solver(A, b, x, tol):
     elapsed_time: float
         Tempo impiegato per risolvere il sistema
     """
+
     if not _is_symmetric_positive_definite(A):
         print("[Warning] - la matrice A non è simmetrica e definita positiva")
     if not _is_row_diagonally_dominant(A):
@@ -163,7 +136,6 @@ def gauss_seidel_solver(A, b, x, tol):
         return current_sol + y
 
     return _base_iterative_solver(A, b, x, tol, _gauss_seidel_update)
-
 
 
 def _linear_solve_forward(L, b):
@@ -206,7 +178,9 @@ def _linear_solve_forward(L, b):
 
     return x
 
+
 def gradient_solver(A, b, x, tol):
+
     """
     Risolve il sistema lineare A @ x = b utilizzando il metodo del gradiente.
 
@@ -246,6 +220,7 @@ def gradient_solver(A, b, x, tol):
         return current_sol + alpha * r
 
     return _base_iterative_solver(A, b, x, tol, _gradient_update)
+
 
 def coniugate_gradient_solver(A, b, x, tol):
     """
@@ -298,6 +273,7 @@ def coniugate_gradient_solver(A, b, x, tol):
         return new_sol
 
     return _base_iterative_solver(A, b, x, tol, _coniugate_gradient_update)
+
 
 def _is_symmetric(A, tol=1e-8):
     return np.allclose(A, A.T, atol=tol)
