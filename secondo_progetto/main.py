@@ -36,8 +36,7 @@ def main():
     plt.grid(True, which="both", ls="--", lw=0.5)
 
     # Salvataggio immagine
-    plt.savefig('img/confronto_dct2.png', dpi=300)
-    plt.show()
+    plt.savefig('output_immagini/confronto_dct2.png', dpi=300)
 
 if __name__ == "__main__":
     main()
