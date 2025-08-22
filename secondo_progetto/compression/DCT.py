@@ -26,10 +26,10 @@ def DCT2(A):
     row, columns = A.shape
     alpha_coeff = np.zeros((row, columns))
 
-    for k in range(columns):
-        alpha_coeff[:, k] = DCT1(A[:, k])
-
     for k in range(row):
-        alpha_coeff[k, :] = DCT1(alpha_coeff[k, :])
+        alpha_coeff[k, :] = DCT1(A[k, :])
+
+    for k in range(columns):
+        alpha_coeff[:, k] = DCT1(alpha_coeff[:, k])
 
     return alpha_coeff
