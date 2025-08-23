@@ -1,0 +1,108 @@
+import numpy as np
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from PIL import Image
+
+def main():
+    percorso_file = {"path": None}  # uso un dizionario per renderlo modificabile dentro le funzioni
+
+    def scegli_file():
+        percorso = filedialog.askopenfilename(
+            title="Seleziona un file BMP",
+            filetypes=[("Immagini BMP", "*.bmp")]  # filtro solo BMP
+        )
+        if percorso:
+            percorso_file["path"] = percorso
+            etichetta_file.config(text=f"Hai scelto: {percorso}")
+        else:
+            etichetta_file.config(text="Nessun file selezionato")
+            percorso_file["path"] = None
+
+    def comprimi_immagine():
+        # --- 1. Controllo se è stato scelto un file ---
+        if not percorso_file["path"]:
+            messagebox.showerror("Errore", "Devi selezionare un file BMP prima di procedere.")
+            return
+
+        # --- 2. Recupero e controllo input numerici ---
+        try:
+            valore_F = int(entry_F.get())
+            valore_d = int(entry_d.get())
+        except ValueError:
+            messagebox.showerror("Errore", "I valori di F e d devono essere numeri interi.")
+            return
+
+        # --- 3. Carico immagine per dimensioni ---
+        try:
+            img = Image.open(percorso_file["path"])
+            larghezza, altezza = img.size
+        except Exception as e:
+            messagebox.showerror("Errore", f"Impossibile aprire l'immagine: {e}")
+            return
+
+        # --- 4. Controllo vincoli su F ---
+        if valore_F >= larghezza or valore_F >= altezza:
+            messagebox.showerror("Errore", f"F deve essere minore delle dimensioni dell'immagine "
+                                           f"(larghezza={larghezza}, altezza={altezza}).")
+            return
+
+        # --- 5. Controllo vincoli su d ---
+        if not (0 <= valore_d <= 2 * valore_F - 2):
+            messagebox.showerror("Errore", f"d deve essere compreso tra 0 e {2 * valore_F - 2}.")
+            return
+
+        # --- 6. Conversione immagine in matrice ---
+        img_gray = img.convert("L")
+        matrice = np.array(img_gray)
+
+        # --- Debug: stampo dimensioni e primi valori ---
+        print("Dimensione matrice:", matrice.shape)
+        print("Primi valori:", matrice[:5, :5])  # solo un estratto
+
+        etichetta_risultato.config(
+            text=f"Immagine convertita in matrice {matrice.shape}, F={valore_F}, d={valore_d}"
+        )
+
+
+
+    # Finestra principale
+    finestra = tk.Tk()
+    finestra.title("Selezione file BMP e parametri")
+    finestra.geometry("450x350")
+
+    # Sezione file
+    etichetta_file = tk.Label(finestra, text="Nessun file selezionato", font=("Arial", 12))
+    etichetta_file.pack(pady=10)
+
+    bottone_file = tk.Button(finestra, text="Scegli un file BMP", command=scegli_file)
+    bottone_file.pack(pady=5)
+
+    # Sezione valori F e d
+    frame_parametri = tk.Frame(finestra)
+    frame_parametri.pack(pady=20)
+
+    # Valore F
+    label_F = tk.Label(frame_parametri, text="Valore F:", font=("Arial", 12))
+    label_F.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+    entry_F = tk.Entry(frame_parametri, width=10)
+    entry_F.grid(row=0, column=1, padx=5, pady=5)
+
+    # Valore d
+    label_d = tk.Label(frame_parametri, text="Valore d:", font=("Arial", 12))
+    label_d.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+    entry_d = tk.Entry(frame_parametri, width=10)
+    entry_d.grid(row=1, column=1, padx=5, pady=5)
+
+    # Bottone per mostrare i valori
+    bottone_valori = tk.Button(finestra, text="Comprimi immagine", command=comprimi_immagine)
+    bottone_valori.pack(pady=10)
+
+    # Etichetta di output
+    etichetta_risultato = tk.Label(finestra, text="", font=("Arial", 12))
+    etichetta_risultato.pack(pady=10)
+
+    # Avvio loop
+    finestra.mainloop()
+
+if __name__ == "__main__":
+    main()
