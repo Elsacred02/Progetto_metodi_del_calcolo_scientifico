@@ -56,10 +56,10 @@ def main():
         # --- 6. Conversione immagine in matrice ---
         img_gray = img.convert("L")
         img_gray.show()
-        new_matrix = np.array(img_gray)
+        image_as_matrix = np.array(img_gray)
 
         # --- 7. Effettuo la compressione ---
-        row, columns = new_matrix.shape
+        row, columns = image_as_matrix.shape
 
         for i in range(0, row, valore_F):
 
@@ -67,15 +67,15 @@ def main():
 
                 if valore_F + 8 < row:
 
-                    sub_matrix = new_matrix[i:i+valore_F, j:j+valore_F]
+                    sub_matrix = image_as_matrix[i:i+valore_F, j:j+valore_F]
                     sub_matrix_dct = dct(dct(sub_matrix.T, norm='ortho').T, norm='ortho')
                     cutted_dct_submatrix = cut_frequences(sub_matrix_dct, valore_d)
                     idct_submatrix = idct(idct(cutted_dct_submatrix.T, norm='ortho').T, norm='ortho')
                     idct_submatrix = np.round(idct_submatrix)
                     idct_submatrix = np.clip(idct_submatrix, 0, 255)
-                    new_matrix[i:i+valore_F, j:j+valore_F] = idct_submatrix
+                    image_as_matrix[i:i+valore_F, j:j+valore_F] = idct_submatrix
 
-        matrice_uint8 = np.round(new_matrix).astype(np.uint8)
+        matrice_uint8 = np.round(image_as_matrix).astype(np.uint8)
 
         # Creo immagine
         img = Image.fromarray(matrice_uint8)
