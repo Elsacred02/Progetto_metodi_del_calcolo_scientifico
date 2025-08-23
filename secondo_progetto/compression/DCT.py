@@ -21,13 +21,13 @@ def DCT1(discrete_function):
 
     return a_coeff
 
-def DCT2(A):
+def DCT2(matrix):
 
-    row, columns = A.shape
+    row, columns = matrix.shape
     alpha_coeff = np.zeros((row, columns))
 
     for k in range(row):
-        alpha_coeff[k, :] = DCT1(A[k, :])
+        alpha_coeff[k, :] = DCT1(matrix[k, :])
 
     for k in range(columns):
         alpha_coeff[:, k] = DCT1(alpha_coeff[:, k])

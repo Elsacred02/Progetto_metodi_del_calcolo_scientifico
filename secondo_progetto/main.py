@@ -26,7 +26,7 @@ def main():
 
     # --- Grafico ---
     plt.figure(figsize=(8, 6))
-    plt.plot(Ns, times_custom, 'o-', label='DCT2 fatta in casa')
+    plt.plot(Ns, times_custom, 'o-', label='DCT2 custom')
     plt.plot(Ns, times_scipy, 's-', label='DCT2 scipy')
     plt.yscale('log')
     plt.xlabel('Dimensione N')
