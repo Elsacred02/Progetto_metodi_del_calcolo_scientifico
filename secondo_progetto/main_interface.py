@@ -55,7 +55,6 @@ def main():
 
         # --- 6. Conversione immagine in matrice ---
         img_gray = img.convert("L")
-        img_gray.show()
         image_as_matrix = np.array(img_gray)
 
         # --- 7. Effettuo la compressione ---
@@ -76,20 +75,23 @@ def main():
                     image_as_matrix[i:i+valore_F, j:j+valore_F] = idct_submatrix
 
         matrice_uint8 = np.round(image_as_matrix).astype(np.uint8)
+        img_compressa = Image.fromarray(matrice_uint8)
 
-        # Creo immagine
-        img = Image.fromarray(matrice_uint8)
+        # --- 8. Visualizzazione affiancata originale vs compressa ---
+        margine = 20  # pixel tra le due immagini
+        larghezza_tot = img_gray.width + img_compressa.width + margine
+        altezza_max = max(img_gray.height, img_compressa.height)
+        img_affiancata = Image.new("L", (larghezza_tot, altezza_max), color=255)  # sfondo bianco
+        img_affiancata.paste(img_gray, (0, 0))
+        img_affiancata.paste(img_compressa, (img_gray.width + margine, 0))
+        img_affiancata.show()
 
-        # Creo cartella se non esiste
+        # --- 9. Salvataggio immagine ---
         output_dir = "compressed_images"
         os.makedirs(output_dir, exist_ok=True)
-
-        # Salvo immagine
         output_path = os.path.join(output_dir, "immagine_compressa.png")
-        img.save(output_path)
-        img.show()
-
-        print(f"Immagine salvata in: {output_path}")
+        img_compressa.save(output_path)
+        print(f"Immagine compressa salvata in: {output_path}")
 
     # Finestra principale
     finestra = tk.Tk()
