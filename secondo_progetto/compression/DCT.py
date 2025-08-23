@@ -33,3 +33,15 @@ def DCT2(matrix):
         alpha_coeff[:, k] = DCT1(alpha_coeff[:, k])
 
     return alpha_coeff
+
+def cut_frequences(coeffs, d):
+
+    row, columns = coeffs.shape
+    cutted_coeffs = np.zeros((row, columns))
+
+    for k in range(row):
+        for l in range(columns):
+            if k + l <= d:
+                cutted_coeffs[k, l] = coeffs[k, l]
+
+    return cutted_coeffs

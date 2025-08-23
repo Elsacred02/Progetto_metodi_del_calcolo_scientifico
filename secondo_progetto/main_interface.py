@@ -1,7 +1,9 @@
-import numpy as np
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image
+from scipy.fftpack import dct, idct
+from compression import *
+import os
 
 def main():
     percorso_file = {"path": None}  # uso un dizionario per renderlo modificabile dentro le funzioni
@@ -53,15 +55,41 @@ def main():
 
         # --- 6. Conversione immagine in matrice ---
         img_gray = img.convert("L")
-        matrice = np.array(img_gray)
+        img_gray.show()
+        new_matrix = np.array(img_gray)
 
-        # --- Debug: stampo dimensioni e primi valori ---
-        print("Dimensione matrice:", matrice.shape)
-        print("Primi valori:", matrice[:5, :5])  # solo un estratto
+        # --- 7. Effettuo la compressione ---
+        row, columns = new_matrix.shape
 
-        etichetta_risultato.config(
-            text=f"Immagine convertita in matrice {matrice.shape}, F={valore_F}, d={valore_d}"
-        )
+        for i in range(0, row, valore_F):
+
+            for j in range(0, columns, valore_F):
+
+                if valore_F + 8 < row:
+
+                    sub_matrix = new_matrix[i:i+valore_F, j:j+valore_F]
+                    sub_matrix_dct = dct(dct(sub_matrix.T, norm='ortho').T, norm='ortho')
+                    cutted_dct_submatrix = cut_frequences(sub_matrix_dct, valore_d)
+                    idct_submatrix = idct(idct(cutted_dct_submatrix.T, norm='ortho').T, norm='ortho')
+                    idct_submatrix = np.round(idct_submatrix)
+                    idct_submatrix = np.clip(idct_submatrix, 0, 255)
+                    new_matrix[i:i+valore_F, j:j+valore_F] = idct_submatrix
+
+        matrice_uint8 = np.round(new_matrix).astype(np.uint8)
+
+        # Creo immagine
+        img = Image.fromarray(matrice_uint8)
+
+        # Creo cartella se non esiste
+        output_dir = "compressed_images"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Salvo immagine
+        output_path = os.path.join(output_dir, "immagine_compressa.png")
+        img.save(output_path)
+        img.show()
+
+        print(f"Immagine salvata in: {output_path}")
 
     # Finestra principale
     finestra = tk.Tk()
