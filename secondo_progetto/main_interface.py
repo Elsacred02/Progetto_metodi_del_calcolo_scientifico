@@ -63,8 +63,6 @@ def main():
             text=f"Immagine convertita in matrice {matrice.shape}, F={valore_F}, d={valore_d}"
         )
 
-
-
     # Finestra principale
     finestra = tk.Tk()
     finestra.title("Selezione file BMP e parametri")
@@ -93,7 +91,7 @@ def main():
     entry_d = tk.Entry(frame_parametri, width=10)
     entry_d.grid(row=1, column=1, padx=5, pady=5)
 
-    # Bottone per mostrare i valori
+    # Bottone per effettuare la compressione i valori
     bottone_valori = tk.Button(finestra, text="Comprimi immagine", command=comprimi_immagine)
     bottone_valori.pack(pady=10)
 
