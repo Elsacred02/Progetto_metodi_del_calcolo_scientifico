@@ -78,16 +78,26 @@ def main():
         img_compressa = Image.fromarray(matrice_uint8)
 
         # --- 8. Visualizzazione immagine originale e compressa ---
-        margine = 20  # pixel tra le due immagini
-        larghezza_tot = img_gray.width + img_compressa.width + margine
-        altezza_max = max(img_gray.height, img_compressa.height)
-        img_affiancata = Image.new("L", (larghezza_tot, altezza_max), color=255)  # sfondo bianco
-        img_affiancata.paste(img_gray, (0, 0))
-        img_affiancata.paste(img_compressa, (img_gray.width + margine, 0))
+        margine = 20  # pixel di margine
+        if img_gray.width > img_gray.height:
+            # Immagine orizzontale
+            larghezza_tot = max(img_gray.width, img_compressa.width)
+            altezza_tot = img_gray.height + img_compressa.height + margine
+            img_affiancata = Image.new("L", (larghezza_tot, altezza_tot), color=255)
+            img_affiancata.paste(img_gray, (0, 0))
+            img_affiancata.paste(img_compressa, (0, img_gray.height + margine))
+        else:
+            # Immagine verticale
+            larghezza_tot = img_gray.width + img_compressa.width + margine
+            altezza_tot = max(img_gray.height, img_compressa.height)
+            img_affiancata = Image.new("L", (larghezza_tot, altezza_tot), color=255)
+            img_affiancata.paste(img_gray, (0, 0))
+            img_affiancata.paste(img_compressa, (img_gray.width + margine, 0))
+
         img_affiancata.show()
 
         # --- 9. Salvataggio immagine ---
-        output_dir = "compressed_images"
+        output_dir = "output_immagini"
         os.makedirs(output_dir, exist_ok=True)
         output_path = os.path.join(output_dir, "immagine_compressa.bmp")
         img_compressa.save(output_path)
