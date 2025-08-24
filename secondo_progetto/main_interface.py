@@ -64,7 +64,7 @@ def main():
 
             for j in range(0, columns, valore_F):
 
-                if valore_F + 8 < row:
+                if valore_F + 8 < row and valore_F + 8 < columns:
 
                     sub_matrix = image_as_matrix[i:i+valore_F, j:j+valore_F]
                     sub_matrix_dct = dct(dct(sub_matrix.T, norm='ortho').T, norm='ortho')
@@ -77,7 +77,7 @@ def main():
         matrice_uint8 = np.round(image_as_matrix).astype(np.uint8)
         img_compressa = Image.fromarray(matrice_uint8)
 
-        # --- 8. Visualizzazione affiancata originale vs compressa ---
+        # --- 8. Visualizzazione immagine originale e compressa ---
         margine = 20  # pixel tra le due immagini
         larghezza_tot = img_gray.width + img_compressa.width + margine
         altezza_max = max(img_gray.height, img_compressa.height)
@@ -89,7 +89,7 @@ def main():
         # --- 9. Salvataggio immagine ---
         output_dir = "compressed_images"
         os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, "immagine_compressa.png")
+        output_path = os.path.join(output_dir, "immagine_compressa.bmp")
         img_compressa.save(output_path)
         print(f"Immagine compressa salvata in: {output_path}")
 
