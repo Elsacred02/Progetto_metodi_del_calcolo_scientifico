@@ -8,26 +8,26 @@ def _computeW(N, k):
 
     return W
 
-def DCT1(discrete_function):
-    N = len(discrete_function)
+def DCT1(v):
+    N = len(v)
     a_coeff = np.zeros(N)
 
     for k in range(N):
         W_k = _computeW(N, k)
         if k == 0:
-            a_coeff[k] = (discrete_function @ W_k) / np.sqrt(N)
+            a_coeff[k] = (v @ W_k) / np.sqrt(N)
         else:
-            a_coeff[k] = (discrete_function @ W_k) / np.sqrt(N / 2)
+            a_coeff[k] = (v @ W_k) / np.sqrt(N / 2)
 
     return a_coeff
 
-def DCT2(matrix):
+def DCT2(A):
 
-    row, columns = matrix.shape
+    row, columns = A.shape
     alpha_coeff = np.zeros((row, columns))
 
     for k in range(row):
-        alpha_coeff[k, :] = DCT1(matrix[k, :])
+        alpha_coeff[k, :] = DCT1(A[k, :])
 
     for k in range(columns):
         alpha_coeff[:, k] = DCT1(alpha_coeff[:, k])
