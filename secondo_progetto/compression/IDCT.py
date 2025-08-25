@@ -18,12 +18,12 @@ def IDCT2(A):
     row, columns = A.shape
     original_matrix = np.zeros((row, columns))
 
-    # inversa sulle colonne
-    for k in range(columns):
-        original_matrix[:, k] = IDCT1(A[:, k])
-
     # inversa sulle righe
     for k in range(row):
-        original_matrix[k, :] = IDCT1(original_matrix[k, :])
+        original_matrix[k, :] = IDCT1(A[k, :])
+
+    # inversa sulle colonne
+    for k in range(columns):
+        original_matrix[:, k] = IDCT1(original_matrix[:, k])
 
     return original_matrix
