@@ -64,7 +64,7 @@ def main():
 
             for j in range(0, columns, valore_F):
 
-                if valore_F + 8 < row and valore_F + 8 < columns:
+                if valore_F + i < row and valore_F + j < columns:
 
                     sub_matrix = image_as_matrix[i:i+valore_F, j:j+valore_F]
                     sub_matrix_dct = dct(dct(sub_matrix.T, norm='ortho').T, norm='ortho')

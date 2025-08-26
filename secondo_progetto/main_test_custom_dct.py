@@ -16,13 +16,17 @@ def main():
 
         # Tempo DCT2 custom
         start = time()
-        DCT2(A)
+        my_dct = DCT2(A)
         times_custom.append(time() - start)
 
         # Tempo DCT2 scipy
         start = time()
-        dct(dct(A.T, norm='ortho').T, norm='ortho')
+        library_dct =dct(dct(A.T, norm='ortho').T, norm='ortho')
         times_scipy.append(time() - start)
+
+        # Confronto
+        if not np.allclose(my_dct, library_dct):
+            print(f"Errore per N={N}")
 
     # --- Grafico ---
     plt.figure(figsize=(8, 6))

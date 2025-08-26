@@ -41,7 +41,7 @@ def cut_frequences(coeffs, d):
 
     for k in range(row):
         for l in range(columns):
-            if k + l <= d:
+            if k + l < d:
                 cutted_coeffs[k, l] = coeffs[k, l]
 
     return cutted_coeffs
